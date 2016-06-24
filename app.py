@@ -8,7 +8,7 @@ modus = Modus(app)
 book_list = []
 
 @app.route('/books', methods=['GET'])
-def index():
+def books():
   return render_template('index.html', book_list=book_list)
 
 @app.route('/books/new', methods=['GET'])
@@ -19,16 +19,22 @@ def new_book():
 def create_book():
   new_book = Book(request.form['title'], request.form['author'])
   book_list.append(new_book)
-  return redirect(url_for('index'))
+  return redirect(url_for('books'))
 
 
 @app.route('/books/<int:id>', methods=['GET'])
-def show_book():
-  return render_template('show.html')
+def show_book(id):
+  for book in book_list:
+    if book.id == id:
+      selected_book = book
+      return render_template('show.html', book=selected_book)
+    else:
+      pass
+  return redirect(url_for('books'))
 
 @app.route('/books/<int:id>', methods=["DELETE"])
 def delete_book():
-  return redirect(url_for('index'))
+  return redirect(url_for('books'))
 
 
 @app.route('/books/<int:id>/edit', methods=['GET'])
